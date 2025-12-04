@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
-import MovieSlider from "../MovieSlider/MovieSlider";
-import MovieList from "../MovieList/MovieList";
-import ComboList from "../ComboList/ComboList";
-import EndowList from "../EndowList/EndowList";
-import IncomingMovieList from "../IncomingMovieList/IncomingMovieList";
+import IphoneList from "../IphoneList/IphoneList";
+import ModelSlider3D from "../ModelSlider3D/ModelSlider3D";
 
 function HomePage() {
   useEffect(() => {
@@ -12,11 +9,8 @@ function HomePage() {
 
   return (
     <React.Fragment>
-      <MovieSlider />
-      <MovieList />
-      <ComboList />
-      <EndowList />
-      <IncomingMovieList />
+      <ModelSlider3D />
+      <IphoneList />
     </React.Fragment>
   );
 }

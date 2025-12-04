@@ -15,7 +15,7 @@ function BookTicket() {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  // 🟢 Callback nhận từ FilmSchedule
+  // Callback nhận từ FilmSchedule
   const handleScheduleSelect = (date, time) => {
     setSelectedDate(date);
     setSelectedTime(time);

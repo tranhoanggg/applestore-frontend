@@ -127,6 +127,9 @@ function FilmDetail() {
             <p>
               <strong>Thời lượng:</strong> {film.duration} phút
             </p>
+            <p>
+              <strong>Giá vé:</strong> 50.000 VNĐ
+            </p>
           </div>
 
           <button
