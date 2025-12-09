@@ -1,22 +1,13 @@
 .navbar {
   width: 100%;
-  background: #fafafa; /* Màu chuẩn Apple */
+  background: #fafafa;
   padding: 8px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  /* border-bottom: 2px solid rgba(0, 0, 0, 0.1); */
-
-  /* Gradient border giống Apple Store — xanh → cam */
   border-bottom: none;
-  background-image: linear-gradient(
-    to right,
-    #0277ff 0%,
-    /* xanh Apple */ #ff6a00 100% /* cam Apple */
-  );
+  background-image: linear-gradient(to right, #0277ff 0%, #ff6a00 100%);
   background-repeat: no-repeat;
-
-  /* tạo “border” dạng hairline */
   background-size: 100% 3px;
   background-position: bottom;
 }
@@ -29,6 +20,10 @@
   align-items: center;
   justify-content: space-between;
   list-style: none;
+}
+
+.navbar-menu li {
+  cursor: pointer;
 }
 
 .navbar-item a {
@@ -48,6 +43,8 @@
 .navbar-item svg {
   fill: #1d1d1f;
   transition: 0.2s;
+  width: 18px;
+  height: 18px;
 }
 
 .navbar-item svg:hover {
@@ -67,4 +64,80 @@
   width: 20px;
   height: 20px;
   transform: scale(2);
+}
+
+/* Overlay */
+.nav-blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  backdrop-filter: blur(36px);
+  background: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 90;
+}
+
+.nav-blur-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Submenu */
+.nav-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 40px 345px;
+  background: #fff;
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition: all 0.38s cubic-bezier(0.48, 0.04, 0.26, 0.97);
+  z-index: 100;
+}
+
+.nav-submenu.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.submenu-heading {
+  margin-bottom: 12px;
+}
+
+.submenu-content {
+  width: 980px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.submenu-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.submenu-group:hover .submenu-title {
+  text-decoration: underline;
+}
+
+.submenu-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.submenu-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin: 0;
 }

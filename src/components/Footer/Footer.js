@@ -12,7 +12,7 @@ function Footer() {
       <div className="footer-container">
         {/* VỀ BC CINEMA */}
         <div className="footer-column">
-          <h2 className="footer-title">VỀ BC CINEMA</h2>
+          <h2 className="footer-title">Về Apple</h2>
           <div className="footer-divider"></div>
           <p>
             <a href="#" className="footer-item-has-link">
@@ -68,15 +68,39 @@ function Footer() {
             cả Lễ, Tết)
           </p>
           <p>
-            <strong>Email hỗ trợ:</strong> cskh@bccinema.vn
+            <strong>Email hỗ trợ:</strong> cskh@apple.vn
           </p>
 
           <h5 className="social-title">MẠNG XÃ HỘI</h5>
           <div className="social-icons">
-            <img src={FbIcon} alt="facebook" className="social-icon" />
-            <img src={IgIcon} alt="instagram" className="social-icon" />
-            <img src={TiktokIcon} alt="tiktok" className="social-icon" />
-            <img src={YtIcon} alt="youtube" className="social-icon" />
+            <a
+              href="https://www.facebook.com/apple"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={FbIcon} alt="facebook" className="social-icon" />
+            </a>
+            <a
+              href="https://www.instagram.com/apple/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={IgIcon} alt="instagram" className="social-icon" />
+            </a>
+            <a
+              href="https://www.tiktok.com/@apple"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={TiktokIcon} alt="tiktok" className="social-icon" />
+            </a>
+            <a
+              href="https://www.youtube.com/@Apple"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={YtIcon} alt="youtube" className="social-icon" />
+            </a>
           </div>
         </div>
       </div>

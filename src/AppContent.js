@@ -1,48 +1,20 @@
 import "./App.css";
-import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import HomePage from "./components/HomePage/HomePage";
-import FilmsPage from "./components/FilmsPage/FilmsPage";
-import GoodsPage from "./components/GoodsPage/GoodsPage";
-import Membership from "./components/Membership/Membership";
-import LoginPopup from "./components/LoginPopup/LoginPopup";
-import LoadingPopup from "./components/LoadingPopup/LoadingPopup";
-import FilmDetailPage from "./components/FilmDetailPage/FilmDetailPage";
-import ComboDetailPage from "./components/ComboDetailPage/ComboDetailPage";
-import GoodsPaymentPage from "./components/GoodsPaymentPage/GoodsPaymentPage";
-import BookTicket from "./components/BookTicket/BookTicket";
-import UpdateProfile from "./components/UpdateProfile/UpdateProfile";
+import SignUpPage from "./components/SignUpPage/SignUpPage";
+import LoginPage from "./components/LoginPage/LoginPage";
 
 function AppContent() {
-  const navigate = useNavigate();
-  const [showLoading, setShowLoading] = useState(false);
-
-  const handleMemberClick = () => {
-    setShowLoading(true);
-    setTimeout(() => {
-      setShowLoading(false);
-      navigate("/login");
-    }, 3200);
-  };
-
   return (
     <>
-      <NavigationBar onMemberClick={handleMemberClick} />
+      <NavigationBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/films" element={<FilmsPage />} />
-        <Route path="/goods" element={<GoodsPage />} />
-        <Route path="/membership" element={<Membership />} />
-        <Route path="/login" element={<LoginPopup />} />
-        <Route path="/film/:id" element={<FilmDetailPage />} />
-        <Route path="/combo/:id" element={<ComboDetailPage />} />
-        <Route path="/goodspayment" element={<GoodsPaymentPage />} />
-        <Route path="/bookticket" element={<BookTicket />} />
-        <Route path="/updateprofile" element={<UpdateProfile />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
-      {showLoading && <LoadingPopup />}
       <Footer />
     </>
   );

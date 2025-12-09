@@ -175,7 +175,7 @@ function IphoneList() {
 
   return (
     <section className="iphonelist-container">
-      <h2 className="iphonelist-title">iPhone</h2>
+      <h2 className="iphonelist-title">Mọi phiên bản iPhone</h2>
 
       <button
         className="iphonelist arrow prev"
@@ -273,11 +273,11 @@ function IphoneList() {
 
                   {/* Button buy */}
                   <div className="iphonelist-btn-container">
-                    <button className="btn information">
+                    <button className="iphonelist btn information">
                       <span className="more-text">THÔNG TIN SẢN PHẨM</span>
                     </button>
 
-                    <button className="btn buy">
+                    <button className="iphonelist btn buy">
                       <span className="buy-text">MUA NGAY</span>
                     </button>
                   </div>

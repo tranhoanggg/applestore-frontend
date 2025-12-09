@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
-import IphoneList from "../IphoneList/IphoneList";
 import ModelSlider3D from "../ModelSlider3D/ModelSlider3D";
+import IphoneList from "../IphoneList/IphoneList";
+import IpadList from "../IpadList/IpadList";
+import MacList from "../MacList/MacList";
+import WatchList from "../WatchList/WatchList";
 
 function HomePage() {
   useEffect(() => {
@@ -11,6 +14,9 @@ function HomePage() {
     <React.Fragment>
       <ModelSlider3D />
       <IphoneList />
+      <IpadList />
+      <MacList />
+      <WatchList />
     </React.Fragment>
   );
 }
