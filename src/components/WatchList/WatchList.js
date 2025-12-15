@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./WatchList.css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function WatchList() {
+  const navigate = useNavigate();
   const [watchs, setWatchs] = useState([]);
   const [offsetIndex, setOffsetIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
@@ -260,7 +262,19 @@ function WatchList() {
                     </button>
 
                     <button className="watchlist btn buy">
-                      <span className="buy-text">MUA NGAY</span>
+                      <span
+                        className="buy-text"
+                        onClick={() => {
+                          navigate("/buyWatch", {
+                            state: {
+                              product_name: watch.name,
+                              product_type: "watch",
+                            },
+                          });
+                        }}
+                      >
+                        MUA NGAY
+                      </span>
                     </button>
                   </div>
                 </div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./IpadList.css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function IpadList() {
+  const navigate = useNavigate();
   const [ipads, setIpads] = useState([]);
   const [offsetIndex, setOffsetIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
@@ -257,7 +259,19 @@ function IpadList() {
                     </button>
 
                     <button className="ipadlist btn buy">
-                      <span className="buy-text">MUA NGAY</span>
+                      <span
+                        className="buy-text"
+                        onClick={() =>
+                          navigate("/buyIpad", {
+                            state: {
+                              product_name: ipad.name,
+                              product_type: "ipad",
+                            },
+                          })
+                        }
+                      >
+                        MUA NGAY
+                      </span>
                     </button>
                   </div>
                 </div>

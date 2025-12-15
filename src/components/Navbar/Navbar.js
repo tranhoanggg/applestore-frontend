@@ -66,6 +66,15 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const handleAccount = (e) => {
+    e.stopPropagation();
+    setIsSubmenuOpen(false);
+
+    setTimeout(() => {
+      navigate("/account");
+    }, 300);
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -117,32 +126,30 @@ const Navbar = () => {
                 <div className="submenu-group">
                   <img
                     src={SaveSVG}
-                    className="submenu-icon"
-                    alt="Mục đã lưu"
+                    className="submenu-icon icon-cart"
+                    alt="Giỏ hàng"
                   />
                   <div className="submenu-text">
-                    <p className="submenu-title">Mục Đã Lưu</p>
+                    <p className="submenu-title">Giỏ hàng</p>
                   </div>
                 </div>
 
-                <div className="submenu-group">
+                <div className="submenu-group" onClick={handleAccount}>
                   <img
                     src={AccountSVG}
                     className="submenu-icon"
                     alt="Tài khoản"
                   />
-                  <p className="submenu-title">Tài Khoản</p>
+                  <p className="submenu-title">Tài khoản</p>
                 </div>
 
-                <div className="submenu-group">
+                <div className="submenu-group" onClick={handleLogout}>
                   <img
                     src={LoginSVG}
                     className="submenu-icon"
                     alt="Đăng nhập"
                   />
-                  <p className="submenu-title" onClick={handleLogout}>
-                    Đăng xuất
-                  </p>
+                  <p className="submenu-title">Đăng xuất</p>
                 </div>
               </>
             ) : (

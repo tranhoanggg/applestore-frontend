@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MacList.css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function MacList() {
+  const navigate = useNavigate();
   const [macs, setMacs] = useState([]);
   const [offsetIndex, setOffsetIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
@@ -257,7 +259,19 @@ function MacList() {
                     </button>
 
                     <button className="maclist btn buy">
-                      <span className="buy-text">MUA NGAY</span>
+                      <span
+                        className="buy-text"
+                        onClick={() => {
+                          navigate("/buyMac", {
+                            state: {
+                              product_name: mac.name,
+                              product_type: "mac",
+                            },
+                          });
+                        }}
+                      >
+                        MUA NGAY
+                      </span>
                     </button>
                   </div>
                 </div>

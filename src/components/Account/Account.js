@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import "./SignUpPage.css";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Account.css";
 
-export default function SignUpPage() {
+export default function Account() {
   const navigate = useNavigate();
+  const client = JSON.parse(localStorage.getItem("client") || "{}");
 
-  // Local state
+  const [originalUser, setOriginalUser] = useState(null);
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -13,20 +15,170 @@ export default function SignUpPage() {
     month: "",
     year: "",
     email: "",
-    password: "",
-    confirmPassword: "",
     phone: "",
   });
 
-  // Handle change
+  // ================= LOAD USER =================
+  useEffect(() => {
+    if (!client?.id) return;
+
+    fetch(`http://localhost:5000/client_account/${client.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const user = data[0];
+
+        setOriginalUser(user);
+
+        const date = new Date(user.birthday);
+
+        const [lastName, ...first] = user.name.split(" ");
+
+        setForm({
+          firstName: first.join(" "),
+          lastName,
+          day: date.getDate(),
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+          email: user.email,
+          phone: user.phone,
+        });
+      })
+      .catch(console.error);
+  }, [client?.id]);
+
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Generate day, month, year options
+  // ================= VALIDATE =================
+  const checkInformation = async () => {
+    let ok = true;
+
+    const check = (condition, selector) => {
+      const el = document.querySelector(selector);
+      if (!condition) {
+        el.classList.add("active");
+        ok = false;
+      } else {
+        el.classList.remove("active");
+      }
+    };
+
+    check(form.firstName, ".firstname");
+    check(form.lastName, ".lastname");
+    check(form.day && form.month && form.year, ".birthday");
+    check(form.email, ".email");
+    check(form.phone, ".phone");
+
+    const list = await fetch("http://localhost:5000/client_account")
+      .then((res) => res.json())
+      .catch(() => []);
+
+    const existedEmail = list.find(
+      (u) => u.email === form.email && u.id !== client.id
+    );
+    if (existedEmail) {
+      document.querySelector(".email-existed").classList.add("active");
+      ok = false;
+    } else {
+      document.querySelector(".email-existed").classList.remove("active");
+    }
+
+    const existedPhone = list.find(
+      (u) => u.phone === form.phone && u.id !== client.id
+    );
+    if (existedPhone) {
+      document.querySelector(".phone-existed").classList.add("active");
+      ok = false;
+    } else {
+      document.querySelector(".phone-existed").classList.remove("active");
+    }
+
+    return ok;
+  };
+
+  // ================= SUBMIT =================
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const ok = await checkInformation();
+    if (!ok) return;
+
+    const birthday = `${form.year}-${String(form.month).padStart(
+      2,
+      "0"
+    )}-${String(form.day).padStart(2, "0")}`;
+
+    const payload = {
+      id: client.id,
+      name: `${form.lastName} ${form.firstName}`,
+      birthday,
+      email: form.email,
+      phone: form.phone,
+    };
+
+    const normalizeDate = (d) => {
+      const date = new Date(d);
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
+    // ===== SO SÁNH DATA =====
+    const noChange =
+      originalUser.name === payload.name &&
+      normalizeDate(originalUser.birthday) === payload.birthday &&
+      originalUser.email === payload.email &&
+      originalUser.phone === payload.phone;
+
+    if (noChange) {
+      alert("Không phát hiện thông tin cần cập nhật");
+      return;
+    }
+
+    // ===== UPDATE =====
+    fetch("http://localhost:5000/client_account/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
+        if (!data.success) {
+          alert("Cập nhật thất bại!");
+          return;
+        }
+
+        alert("Đã cập nhật thông tin thành công!");
+
+        // Reload user
+        const refreshedData = await fetch(
+          `http://localhost:5000/client_account/${client.id}`
+        ).then((res) => res.json());
+
+        const refreshed = refreshedData[0];
+
+        setOriginalUser(refreshed);
+
+        localStorage.setItem("client", JSON.stringify(refreshed));
+
+        const date = new Date(refreshed.birthday);
+        const [ln, ...fn] = refreshed.name.split(" ");
+
+        setForm((prev) => ({
+          ...prev,
+          firstName: fn.join(" "),
+          lastName: ln,
+          day: date.getDate(),
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+          email: refreshed.email,
+          phone: refreshed.phone,
+        }));
+      })
+      .catch(() => alert("Lỗi kết nối server!"));
+  };
+
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const currentYear = new Date().getFullYear();
@@ -35,160 +187,31 @@ export default function SignUpPage() {
     (_, i) => currentYear - i
   );
 
-  const checkInformation = async () => {
-    let ok = true;
-
-    if (!form.firstName) {
-      document.querySelector(".firstname").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".firstname").classList.remove("active");
-    }
-
-    if (!form.lastName) {
-      document.querySelector(".lastname").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".lastname").classList.remove("active");
-    }
-
-    if (!form.day || !form.month || !form.year) {
-      document.querySelector(".birthday").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".birthday").classList.remove("active");
-    }
-
-    if (!form.email) {
-      document.querySelector(".email").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".email").classList.remove("active");
-    }
-
-    if (!form.password) {
-      document.querySelector(".password").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".password").classList.remove("active");
-    }
-
-    if (!form.confirmPassword) {
-      document.querySelector(".password-confirm-1").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".password-confirm-1").classList.remove("active");
-    }
-
-    if (!form.phone) {
-      document.querySelector(".phone").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".phone").classList.remove("active");
-    }
-
-    const list = await fetch("http://localhost:5000/client_account")
-      .then((res) => res.json())
-      .catch(() => []);
-
-    const existedEmail = list.find((u) => u.email === form.email);
-    if (existedEmail) {
-      document.querySelector(".email-existed").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".email-existed").classList.remove("active");
-    }
-
-    const existedPhone = list.find((u) => u.phone === form.phone);
-    if (existedPhone) {
-      document.querySelector(".phone-existed").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".phone-existed").classList.remove("active");
-    }
-
-    if (form.password !== form.confirmPassword) {
-      document.querySelector(".password-confirm-2").classList.add("active");
-      ok = false;
-    } else {
-      document.querySelector(".password-confirm-2").classList.remove("active");
-    }
-
-    return ok;
-  };
-
-  // Submit form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const ok = await checkInformation();
-    if (!ok) return;
-
-    // Convert to yyyy-mm-dd
-    const birthday = `${form.year}-${String(form.month).padStart(
-      2,
-      "0"
-    )}-${String(form.day).padStart(2, "0")}`;
-
-    const payload = {
-      name: `${form.lastName} ${form.firstName}`,
-      birthday,
-      email: form.email,
-      phone: form.phone,
-      password: form.password,
-    };
-
-    fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Đăng ký thành công!");
-          navigate("/login");
-        } else {
-          alert("Đăng ký thất bại!");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("Lỗi kết nối server!");
-      });
-  };
-
   return (
-    <div className="signup-page">
-      <div className="signup-navbar">
+    <div className="account-page">
+      <div className="account-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">
-          <div className={`option`} onClick={() => navigate("/login")}>
-            Đăng nhập
+          <div className={`option`} onClick={() => navigate("/password-reset")}>
+            Đổi mật khẩu
           </div>
-          <div className={`option active`} onClick={() => navigate("/signup")}>
-            Tạo tài khoản Apple
+          <div className={`option active`} onClick={() => navigate("/account")}>
+            Thông tin tài khoản
           </div>
         </div>
       </div>
 
-      <div className="signup-container">
-        <h1 className="signup-title">Tạo Tài khoản Apple</h1>
-        <p className="signup-subtitle">
-          Chỉ cần có một Tài khoản Apple để truy cập vào tất cả dịch vụ của
-          Apple.
-          <div>
-            Bạn đã có Tài khoản Apple?{" "}
-            <span onClick={() => navigate("/login")}>Đăng Nhập</span>
-          </div>
-        </p>
-
-        <form className="signup-form" onSubmit={handleSubmit}>
+      <div className="account-container">
+        <form className="account-form" onSubmit={handleSubmit}>
           <div className="row">
-            <div className="signup-form-name">
+            <div className="account-form-name">
+              <label className="left-label" htmlFor="firstName">
+                Họ
+              </label>
               <input
                 type="text"
                 placeholder="Họ"
+                id="lastName"
                 className="input name"
                 name="lastName"
                 value={form.lastName}
@@ -202,10 +225,14 @@ export default function SignUpPage() {
                 Nhập họ của bạn.
               </div>
             </div>
-            <div className="signup-form-name">
+            <div className="account-form-name">
+              <label className="left-label" htmlFor="firstName">
+                Tên
+              </label>
               <input
                 type="text"
                 placeholder="Tên"
+                id="firstName"
                 className="input name"
                 name="firstName"
                 value={form.firstName}
@@ -230,7 +257,7 @@ export default function SignUpPage() {
                 value={form.day}
                 onChange={handleChange}
               >
-                <option>Ngày</option>
+                <option value="">Ngày</option>
                 {days.map((d) => (
                   <option key={d} value={d}>
                     {d}
@@ -243,7 +270,7 @@ export default function SignUpPage() {
                 value={form.month}
                 onChange={handleChange}
               >
-                <option>Tháng</option>
+                <option value="">Tháng</option>
                 {months.map((m) => (
                   <option key={m} value={m}>
                     {m}
@@ -256,7 +283,7 @@ export default function SignUpPage() {
                 value={form.year}
                 onChange={handleChange}
               >
-                <option>Năm</option>
+                <option value="">Năm</option>
                 {years.map((y) => (
                   <option key={y} value={y}>
                     {y}
@@ -274,10 +301,14 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <div className="signup-form-email">
+          <div className="account-form-email">
+            <label className="left-label" htmlFor="email">
+              Email
+            </label>
             <input
               type="email"
               placeholder="name@example.com"
+              id="email"
               className="input full"
               name="email"
               value={form.email}
@@ -301,56 +332,14 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <div className="signup-form-password">
-            <input
-              type="password"
-              placeholder="Mật khẩu"
-              className="input full"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-            />
-
-            <div className="input-warning password">
-              <img
-                src={require(`../../assets/images/warning.png`)}
-                alt="warning"
-              />
-              Nhập mật khẩu của bạn.
-            </div>
-          </div>
-
-          <div className="signup-form-password-confirm">
-            <input
-              type="password"
-              placeholder="Xác nhận Mật khẩu"
-              className="input full"
-              name="confirmPassword"
-              value={form.confirmPassword}
-              onChange={handleChange}
-            />
-
-            <div className="input-warning password-confirm-1">
-              <img
-                src={require(`../../assets/images/warning.png`)}
-                alt="warning"
-              />
-              Hãy xác nhận mật khẩu của bạn.
-            </div>
-
-            <div className="input-warning password-confirm-2">
-              <img
-                src={require(`../../assets/images/warning.png`)}
-                alt="warning"
-              />
-              Mật khẩu xác nhận chưa khớp.
-            </div>
-          </div>
-
-          <div className="signup-form-phone">
+          <div className="account-form-phone">
+            <label className="left-label" htmlFor="phone">
+              Số điện thoại
+            </label>
             <input
               type="tel"
               placeholder="Số điện thoại"
+              id="phone"
               className="input full"
               name="phone"
               value={form.phone}
@@ -374,7 +363,7 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <div className="info-box">
+          <div className="account info-box">
             <img
               src="/assets/images/signup.png"
               alt="info"
@@ -386,7 +375,7 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <button className="btn-submit">Đăng ký</button>
+          <button className="btn-submit">Cập nhật</button>
         </form>
       </div>
     </div>
