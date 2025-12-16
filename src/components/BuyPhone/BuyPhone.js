@@ -152,6 +152,8 @@ const BuyPhone = () => {
 
     const payload = {
       user_id: client?.id || null,
+      name: receiver.fullname,
+      phone: receiver.phone,
       product_id: currentProduct.id,
       product_type: "Iphone",
       color: selectedColor,

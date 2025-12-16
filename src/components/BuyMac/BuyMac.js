@@ -171,6 +171,8 @@ const BuyMac = () => {
 
     const payload = {
       user_id: client?.id || null,
+      name: receiver.fullname,
+      phone: receiver.phone,
       product_id: currentProduct.id,
       product_type: "mac",
       color: selectedColor,

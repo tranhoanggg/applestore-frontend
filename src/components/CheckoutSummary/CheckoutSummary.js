@@ -242,6 +242,8 @@ export default function CheckoutSummary() {
 
     const payload = {
       user_id: client.id,
+      name: receiver.fullname,
+      phone: receiver.phone,
       payment_method,
       bank,
       payment_status,
@@ -318,24 +320,25 @@ export default function CheckoutSummary() {
         }`}
       >
         {/* ===== NAVBAR PHỤ ===== */}
-        <div className={`sticky-checkout ${showStickyBar ? "show" : ""}`}>
-          <div className="sticky-left">
-            Tổng giá trị giỏ hàng của bạn là{" "}
-            <strong>{totalPrice.toLocaleString()}đ</strong>
+        {!showQR && (
+          <div className={`sticky-checkout ${showStickyBar ? "show" : ""}`}>
+            <div className="sticky-left">
+              Tổng giá trị giỏ hàng của bạn là{" "}
+              <strong>{totalPrice.toLocaleString()}đ</strong>
+            </div>
+            <button
+              className="sticky-btn"
+              onClick={() => {
+                transactionRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
+              Thanh toán
+            </button>
           </div>
-          <button
-            className="sticky-btn"
-            onClick={() => {
-              transactionRef.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
-            }}
-          >
-            Thanh toán
-          </button>
-        </div>
-
+        )}
         {/* ===== CONTENT ===== */}
         <div className="checkout-content">
           <p className="note">
@@ -354,7 +357,6 @@ export default function CheckoutSummary() {
             Thanh toán
           </button>
         </div>
-
         <div className="checkout-items-container">
           {cartItems.map((item, index) => {
             const { product, quantity, type } = item;
@@ -411,7 +413,6 @@ export default function CheckoutSummary() {
             );
           })}
         </div>
-
         <div className="checkout buy-content" ref={transactionRef}>
           <>
             {/* LEFT IMAGE */}
