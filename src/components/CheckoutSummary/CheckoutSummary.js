@@ -357,6 +357,7 @@ export default function CheckoutSummary() {
             Thanh toán
           </button>
         </div>
+
         <div className="checkout-items-container">
           {cartItems.map((item, index) => {
             const { product, quantity, type } = item;
@@ -413,6 +414,7 @@ export default function CheckoutSummary() {
             );
           })}
         </div>
+
         <div className="checkout buy-content" ref={transactionRef}>
           <>
             {/* LEFT IMAGE */}

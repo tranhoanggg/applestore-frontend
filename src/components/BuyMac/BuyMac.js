@@ -174,7 +174,7 @@ const BuyMac = () => {
       name: receiver.fullname,
       phone: receiver.phone,
       product_id: currentProduct.id,
-      product_type: "mac",
+      product_type: "Mac",
       color: selectedColor,
       ram: selectedRam,
       rom: selectedRom,

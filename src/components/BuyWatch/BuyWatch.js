@@ -145,7 +145,7 @@ const BuyWatch = () => {
       name: receiver.fullname,
       phone: receiver.phone,
       product_id: currentProduct.id,
-      product_type: "watch",
+      product_type: "Watch",
       color: selectedColor,
       address_detail: isCash ? "" : receiver.address,
       commune: isCash ? "" : receiver.ward,

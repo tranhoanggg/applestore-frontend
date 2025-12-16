@@ -155,7 +155,7 @@ const BuyIpad = () => {
       name: receiver.fullname,
       phone: receiver.phone,
       product_id: currentProduct.id,
-      product_type: "ipad",
+      product_type: "Ipad",
       color: selectedColor,
       capacity: selectedCapacity,
       address_detail: isCash ? "" : receiver.address,

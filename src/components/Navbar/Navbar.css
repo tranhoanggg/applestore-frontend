@@ -198,3 +198,27 @@
 .navbar-item.disabled:hover .navbar-tooltip {
   opacity: 1;
 }
+
+/* ===== CART BADGE ===== */
+.cart-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  width: 10px;
+  height: 10px;
+  background: #000;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 600;
+  border-radius: 9px;
+  display: inline-block;
+  text-align: center;
+  line-height: 10px;
+}
