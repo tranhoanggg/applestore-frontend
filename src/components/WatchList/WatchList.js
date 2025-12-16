@@ -165,6 +165,32 @@ function WatchList() {
     }
   };
 
+  const handleBuyNow = (watch) => {
+    const client = localStorage.getItem("client");
+
+    if (!client) {
+      // chưa đăng nhập → chuyển sang login
+      navigate("/login", {
+        state: {
+          redirectTo: "/buyWatch",
+          payload: {
+            product_name: watch.name,
+            product_type: "Watch",
+          },
+        },
+      });
+      return;
+    }
+
+    // đã đăng nhập → mua ngay
+    navigate("/buyWatch", {
+      state: {
+        product_name: watch.name,
+        product_type: "Watch",
+      },
+    });
+  };
+
   return (
     <section className="watchlist-container">
       <h2 className="watchlist-title">
@@ -264,14 +290,7 @@ function WatchList() {
                     <button className="watchlist btn buy">
                       <span
                         className="buy-text"
-                        onClick={() => {
-                          navigate("/buyWatch", {
-                            state: {
-                              product_name: watch.name,
-                              product_type: "watch",
-                            },
-                          });
-                        }}
+                        onClick={() => handleBuyNow(watch)}
                       >
                         MUA NGAY
                       </span>

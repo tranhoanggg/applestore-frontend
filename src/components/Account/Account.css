@@ -206,6 +206,6 @@ select {
   background: #0577ff;
 }
 
-.active {
+.warning-active {
   display: block;
 }

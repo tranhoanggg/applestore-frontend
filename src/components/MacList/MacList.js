@@ -165,6 +165,32 @@ function MacList() {
     }
   };
 
+  const handleBuyNow = (mac) => {
+    const client = localStorage.getItem("client");
+
+    if (!client) {
+      // chưa đăng nhập → chuyển sang login
+      navigate("/login", {
+        state: {
+          redirectTo: "/buyMac",
+          payload: {
+            product_name: mac.name,
+            product_type: "Mac",
+          },
+        },
+      });
+      return;
+    }
+
+    // đã đăng nhập → mua ngay
+    navigate("/buyMac", {
+      state: {
+        product_name: mac.name,
+        product_type: "Mac",
+      },
+    });
+  };
+
   return (
     <section className="maclist-container">
       <h2 className="maclist-title">Mac - Người bạn đồng hành tin cậy</h2>
@@ -261,14 +287,7 @@ function MacList() {
                     <button className="maclist btn buy">
                       <span
                         className="buy-text"
-                        onClick={() => {
-                          navigate("/buyMac", {
-                            state: {
-                              product_name: mac.name,
-                              product_type: "mac",
-                            },
-                          });
-                        }}
+                        onClick={() => handleBuyNow(mac)}
                       >
                         MUA NGAY
                       </span>

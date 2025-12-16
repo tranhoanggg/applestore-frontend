@@ -165,6 +165,32 @@ function IpadList() {
     }
   };
 
+  const handleBuyNow = (ipad) => {
+    const client = localStorage.getItem("client");
+
+    if (!client) {
+      // chưa đăng nhập → chuyển sang login
+      navigate("/login", {
+        state: {
+          redirectTo: "/buyIpad",
+          payload: {
+            product_name: ipad.name,
+            product_type: "Ipad",
+          },
+        },
+      });
+      return;
+    }
+
+    // đã đăng nhập → mua ngay
+    navigate("/buyIpad", {
+      state: {
+        product_name: ipad.name,
+        product_type: "Ipad",
+      },
+    });
+  };
+
   return (
     <section className="ipadlist-container">
       <h2 className="ipadlist-title">Lựa chọn chiếc iPad của bạn</h2>
@@ -261,14 +287,7 @@ function IpadList() {
                     <button className="ipadlist btn buy">
                       <span
                         className="buy-text"
-                        onClick={() =>
-                          navigate("/buyIpad", {
-                            state: {
-                              product_name: ipad.name,
-                              product_type: "ipad",
-                            },
-                          })
-                        }
+                        onClick={() => handleBuyNow(ipad)}
                       >
                         MUA NGAY
                       </span>

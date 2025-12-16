@@ -88,14 +88,28 @@ const BuyIpad = () => {
     .filter((v) => v.color === selectedColor)
     .map((v) => v.capacity);
 
-  const isFormFilled =
-    receiver.fullname &&
-    receiver.phone &&
-    receiver.address &&
-    receiver.ward &&
-    receiver.district &&
-    receiver.province &&
-    payMethod;
+  const isFormFilled = useMemo(() => {
+    if (!payMethod) return false;
+
+    // Thanh toán tại quầy → chỉ cần tên + SĐT
+    if (payMethod === "counter") {
+      return receiver.fullname && receiver.phone;
+    }
+
+    // Chuyển khoản → cần đầy đủ
+    if (payMethod === "transfer") {
+      return (
+        receiver.fullname &&
+        receiver.phone &&
+        receiver.address &&
+        receiver.ward &&
+        receiver.district &&
+        receiver.province
+      );
+    }
+
+    return false;
+  }, [receiver, payMethod]);
 
   const handlePayment = async () => {
     // === THANH TOÁN TẠI QUẦY ===
@@ -134,16 +148,18 @@ const BuyIpad = () => {
   };
 
   const createBill = async ({ payment_method, bank, payment_status }) => {
+    const isCash = payment_method === "Tiền mặt";
+
     const payload = {
       user_id: client?.id || null,
       product_id: currentProduct.id,
       product_type: "ipad",
       color: selectedColor,
       capacity: selectedCapacity,
-      address_detail: receiver.address,
-      commune: receiver.ward,
-      district: receiver.district,
-      city: receiver.province,
+      address_detail: isCash ? "" : receiver.address,
+      commune: isCash ? "" : receiver.ward,
+      district: isCash ? "" : receiver.district,
+      city: isCash ? "" : receiver.province,
       date: new Date().toISOString().slice(0, 10),
       payment_method,
       bank,
@@ -158,6 +174,49 @@ const BuyIpad = () => {
 
     const data = await res.json();
     return data;
+  };
+
+  const handleAddToCart = async () => {
+    if (!client?.id) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/add_to_cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: client.id,
+          product_id: currentProduct.id,
+          type: "Ipad",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        alert("Thêm vào giỏ hàng thất bại!");
+        return;
+      }
+
+      window.dispatchEvent(new Event("cart-updated"));
+
+      const goToCart = window.confirm(
+        "Đã thêm sản phẩm vào giỏ hàng thành công!\n\nNhấn OK để tới giỏ hàng\nNhấn Huỷ để về trang chủ"
+      );
+
+      if (goToCart) {
+        navigate("/cart");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
+    }
   };
 
   return (
@@ -187,7 +246,10 @@ const BuyIpad = () => {
                   <span className="price-content">
                     Tổng giá: {currentProduct.price.toLocaleString("vi-VN")}₫
                   </span>
-                  <button className="buy-product add-to-cart-btn">
+                  <button
+                    className="buy-product add-to-cart-btn"
+                    onClick={handleAddToCart}
+                  >
                     Thêm vào giỏ hàng
                   </button>
                 </div>
@@ -307,7 +369,16 @@ const BuyIpad = () => {
                       </label>
 
                       <input
-                        disabled={showQR}
+                        disabled={
+                          showQR ||
+                          (payMethod === "counter" &&
+                            [
+                              "address",
+                              "ward",
+                              "district",
+                              "province",
+                            ].includes(field))
+                        }
                         value={receiver[field]}
                         onChange={(e) =>
                           setReceiver({ ...receiver, [field]: e.target.value })

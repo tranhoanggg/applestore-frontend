@@ -19,21 +19,45 @@ const Navbar = () => {
     "Hỗ trợ",
   ];
 
+  const disabledMenus = ["AirPods", "Giải trí", "Phụ kiện", "Hỗ trợ"];
+
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasCartItems, setHasCartItems] = useState(false);
 
   // Kiểm tra login từ localStorage
   useEffect(() => {
-    const checkLogin = () => {
-      const client = localStorage.getItem("client");
-      setIsLoggedIn(!!client);
+    const checkLoginAndCart = async () => {
+      const clientStr = localStorage.getItem("client");
+
+      if (!clientStr) {
+        setIsLoggedIn(false);
+        setHasCartItems(false);
+        return;
+      }
+
+      const client = JSON.parse(clientStr);
+      setIsLoggedIn(true);
+
+      try {
+        const res = await fetch(`http://localhost:5000/cart/${client.id}`);
+        const data = await res.json();
+        setHasCartItems(Array.isArray(data) && data.length > 0);
+      } catch (err) {
+        console.error("Lỗi kiểm tra giỏ hàng", err);
+        setHasCartItems(false);
+      }
     };
 
-    checkLogin();
+    checkLoginAndCart();
 
-    window.addEventListener("storage", checkLogin);
+    window.addEventListener("cart-updated", checkLoginAndCart);
+    window.addEventListener("storage", checkLoginAndCart);
 
-    return () => window.removeEventListener("storage", checkLogin);
+    return () => {
+      window.removeEventListener("cart-updated", checkLoginAndCart);
+      window.removeEventListener("storage", checkLoginAndCart);
+    };
   }, []);
 
   const toggleBagMenu = () => {
@@ -63,6 +87,7 @@ const Navbar = () => {
     localStorage.removeItem("client");
     setIsLoggedIn(false);
     setIsSubmenuOpen(false);
+    setHasCartItems(false);
     navigate("/");
   };
 
@@ -72,6 +97,15 @@ const Navbar = () => {
 
     setTimeout(() => {
       navigate("/account");
+    }, 300);
+  };
+
+  const handleCart = (e) => {
+    e.stopPropagation();
+    setIsSubmenuOpen(false);
+
+    setTimeout(() => {
+      navigate("/cart");
     }, 300);
   };
 
@@ -94,11 +128,23 @@ const Navbar = () => {
           </li>
 
           {/* Menu items */}
-          {menuItems.map((item, index) => (
-            <li key={index} className="navbar-item">
-              <a href="#">{item}</a>
-            </li>
-          ))}
+          {menuItems.map((item, index) => {
+            const isDisabled = disabledMenus.includes(item);
+
+            return (
+              <li
+                key={index}
+                className={`navbar-item ${isDisabled ? "disabled" : ""}`}
+              >
+                <a className="navbar-link">{item}</a>
+                {isDisabled && (
+                  <span className="navbar-tooltip">
+                    Nội dung đang cập nhật, vui lòng đợi chúng tôi hoàn thành
+                  </span>
+                )}
+              </li>
+            );
+          })}
 
           {/* Cart icon */}
           <li className="navbar-item cart" onClick={toggleBagMenu}>
@@ -123,14 +169,21 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                <div className="submenu-group">
+                <div
+                  className={`submenu-group ${!hasCartItems ? "disabled" : ""}`}
+                  onClick={hasCartItems ? handleCart : undefined}
+                >
                   <img
                     src={SaveSVG}
                     className="submenu-icon icon-cart"
                     alt="Giỏ hàng"
                   />
                   <div className="submenu-text">
-                    <p className="submenu-title">Giỏ hàng</p>
+                    {!hasCartItems ? (
+                      <p className="submenu-title">Giỏ hàng trống</p>
+                    ) : (
+                      <span className="submenu-title">Giỏ hàng</span>
+                    )}
                   </div>
                 </div>
 

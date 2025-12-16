@@ -26,6 +26,10 @@
   cursor: pointer;
 }
 
+.navbar-item {
+  position: relative;
+}
+
 .navbar-item a {
   text-decoration: none;
   font-size: 16px;
@@ -147,4 +151,50 @@
   font-weight: 500;
   color: #1d1d1f;
   margin: 0;
+}
+
+.submenu-group.disabled,
+.submenu-group.disabled:hover,
+.submenu-group.disabled .submenu-title,
+.submenu-group.disabled:hover .submenu-title {
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.submenu-group.disabled .submenu-title {
+  color: rgba(29, 29, 31, 0.8);
+}
+
+/* Disabled menu item */
+.navbar-item.disabled {
+  cursor: not-allowed;
+}
+
+.navbar-item.disabled .navbar-link {
+  color: #1d1d1f;
+  opacity: 0.6;
+  position: relative;
+}
+
+/* Tooltip */
+.navbar-tooltip {
+  position: absolute;
+  top: 31px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 999;
+}
+
+/* Show tooltip on hover */
+.navbar-item.disabled:hover .navbar-tooltip {
+  opacity: 1;
 }

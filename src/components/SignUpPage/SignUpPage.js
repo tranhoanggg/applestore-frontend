@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SignUpPage.css";
 import { useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   // Local state
   const [form, setForm] = useState({
@@ -39,52 +43,56 @@ export default function SignUpPage() {
     let ok = true;
 
     if (!form.firstName) {
-      document.querySelector(".firstname").classList.add("active");
+      document.querySelector(".firstname").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".firstname").classList.remove("active");
+      document.querySelector(".firstname").classList.remove("warning-active");
     }
 
     if (!form.lastName) {
-      document.querySelector(".lastname").classList.add("active");
+      document.querySelector(".lastname").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".lastname").classList.remove("active");
+      document.querySelector(".lastname").classList.remove("warning-active");
     }
 
     if (!form.day || !form.month || !form.year) {
-      document.querySelector(".birthday").classList.add("active");
+      document.querySelector(".birthday").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".birthday").classList.remove("active");
+      document.querySelector(".birthday").classList.remove("warning-active");
     }
 
     if (!form.email) {
-      document.querySelector(".email").classList.add("active");
+      document.querySelector(".email").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".email").classList.remove("active");
+      document.querySelector(".email").classList.remove("warning-active");
     }
 
     if (!form.password) {
-      document.querySelector(".password").classList.add("active");
+      document.querySelector(".password").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".password").classList.remove("active");
+      document.querySelector(".password").classList.remove("warning-active");
     }
 
     if (!form.confirmPassword) {
-      document.querySelector(".password-confirm-1").classList.add("active");
+      document
+        .querySelector(".password-confirm-1")
+        .classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".password-confirm-1").classList.remove("active");
+      document
+        .querySelector(".password-confirm-1")
+        .classList.remove("warning-active");
     }
 
     if (!form.phone) {
-      document.querySelector(".phone").classList.add("active");
+      document.querySelector(".phone").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".phone").classList.remove("active");
+      document.querySelector(".phone").classList.remove("warning-active");
     }
 
     const list = await fetch("http://localhost:5000/client_account")
@@ -93,25 +101,33 @@ export default function SignUpPage() {
 
     const existedEmail = list.find((u) => u.email === form.email);
     if (existedEmail) {
-      document.querySelector(".email-existed").classList.add("active");
+      document.querySelector(".email-existed").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".email-existed").classList.remove("active");
+      document
+        .querySelector(".email-existed")
+        .classList.remove("warning-active");
     }
 
     const existedPhone = list.find((u) => u.phone === form.phone);
     if (existedPhone) {
-      document.querySelector(".phone-existed").classList.add("active");
+      document.querySelector(".phone-existed").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".phone-existed").classList.remove("active");
+      document
+        .querySelector(".phone-existed")
+        .classList.remove("warning-active");
     }
 
     if (form.password !== form.confirmPassword) {
-      document.querySelector(".password-confirm-2").classList.add("active");
+      document
+        .querySelector(".password-confirm-2")
+        .classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".password-confirm-2").classList.remove("active");
+      document
+        .querySelector(".password-confirm-2")
+        .classList.remove("warning-active");
     }
 
     return ok;
@@ -166,7 +182,10 @@ export default function SignUpPage() {
           <div className={`option`} onClick={() => navigate("/login")}>
             Đăng nhập
           </div>
-          <div className={`option active`} onClick={() => navigate("/signup")}>
+          <div
+            className={`option option-active`}
+            onClick={() => navigate("/signup")}
+          >
             Tạo tài khoản Apple
           </div>
         </div>

@@ -11,6 +11,7 @@ import BuyMac from "./components/BuyMac/BuyMac";
 import BuyWatch from "./components/BuyWatch/BuyWatch";
 import Account from "./components/Account/Account";
 import PasswordReset from "./components/PasswordReset/PasswordReset";
+import CheckoutSummary from "./components/CheckoutSummary/CheckoutSummary";
 
 function AppContent() {
   return (
@@ -26,6 +27,7 @@ function AppContent() {
         <Route path="/buyWatch" element={<BuyWatch />} />
         <Route path="/account" element={<Account />} />
         <Route path="/password-reset" element={<PasswordReset />} />
+        <Route path="/cart" element={<CheckoutSummary />} />
       </Routes>
       <Footer />
     </>

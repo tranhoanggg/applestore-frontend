@@ -57,10 +57,10 @@ export default function Account() {
     const check = (condition, selector) => {
       const el = document.querySelector(selector);
       if (!condition) {
-        el.classList.add("active");
+        el.classList.add("warning-active");
         ok = false;
       } else {
-        el.classList.remove("active");
+        el.classList.remove("warning-active");
       }
     };
 

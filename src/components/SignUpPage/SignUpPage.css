@@ -37,7 +37,7 @@
   cursor: pointer;
 }
 
-.signup-navbar .option-container .option.active {
+.signup-navbar .option-container .option.option-active {
   opacity: 1;
 }
 
@@ -216,6 +216,6 @@ select {
   background: #0577ff;
 }
 
-.active {
+.warning-active {
   display: block;
 }

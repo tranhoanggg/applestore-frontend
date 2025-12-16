@@ -175,6 +175,32 @@ function IphoneList() {
     }
   };
 
+  const handleBuyNow = (iphone) => {
+    const client = localStorage.getItem("client");
+
+    if (!client) {
+      // chưa đăng nhập → chuyển sang login
+      navigate("/login", {
+        state: {
+          redirectTo: "/buyPhone",
+          payload: {
+            product_name: iphone.name,
+            product_type: "Iphone",
+          },
+        },
+      });
+      return;
+    }
+
+    // đã đăng nhập → mua ngay
+    navigate("/buyPhone", {
+      state: {
+        product_name: iphone.name,
+        product_type: "Iphone",
+      },
+    });
+  };
+
   return (
     <section className="iphonelist-container">
       <h2 className="iphonelist-title">Mọi phiên bản iPhone</h2>
@@ -281,14 +307,7 @@ function IphoneList() {
 
                     <button
                       className="iphonelist btn buy"
-                      onClick={() =>
-                        navigate("/buyPhone", {
-                          state: {
-                            product_name: iphone.name,
-                            product_type: "iphone",
-                          },
-                        })
-                      }
+                      onClick={() => handleBuyNow(iphone)}
                     >
                       <span className="buy-text">MUA NGAY</span>
                     </button>

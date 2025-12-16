@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.login-navbar .option-container .option.active {
+.login-navbar .option-container .option.option-active {
   opacity: 1;
 }
 
@@ -132,6 +132,6 @@
   text-decoration: underline;
 }
 
-.active {
+.warning-active {
   display: block;
 }

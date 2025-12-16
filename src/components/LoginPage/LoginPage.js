@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LoginPage() {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   // Local state
   const [form, setForm] = useState({
@@ -23,17 +28,17 @@ export default function LoginPage() {
     let ok = true;
 
     if (!form.email) {
-      document.querySelector(".email").classList.add("active");
+      document.querySelector(".email").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".email").classList.remove("active");
+      document.querySelector(".email").classList.remove("warning-active");
     }
 
     if (!form.password) {
-      document.querySelector(".password").classList.add("active");
+      document.querySelector(".password").classList.add("warning-active");
       ok = false;
     } else {
-      document.querySelector(".password").classList.remove("active");
+      document.querySelector(".password").classList.remove("warning-active");
     }
 
     return ok;
@@ -52,24 +57,40 @@ export default function LoginPage() {
       const user = users.find((u) => u.email === form.email);
 
       if (!user) {
-        document.querySelector(".loginpage-warning").classList.add("active");
+        document
+          .querySelector(".loginpage-warning")
+          .classList.add("warning-active");
         return;
       } else {
-        document.querySelector(".loginpage-warning").classList.remove("active");
+        document
+          .querySelector(".loginpage-warning")
+          .classList.remove("warning-active");
       }
 
       if (user.password !== form.password) {
-        document.querySelector(".loginpage-warning").classList.add("active");
+        document
+          .querySelector(".loginpage-warning")
+          .classList.add("warning-active");
         return;
       } else {
-        document.querySelector(".loginpage-warning").classList.remove("active");
+        document
+          .querySelector(".loginpage-warning")
+          .classList.remove("warning-active");
       }
 
       alert("Đăng nhập thành công!");
 
       localStorage.setItem("client", JSON.stringify(user));
       window.dispatchEvent(new Event("storage"));
-      navigate("/");
+
+      if (location.state?.redirectTo) {
+        navigate(location.state.redirectTo, {
+          state: location.state.payload,
+          replace: true,
+        });
+      } else {
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       console.error(error);
       alert("Lỗi kết nối server!");
@@ -81,7 +102,10 @@ export default function LoginPage() {
       <div className="login-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">
-          <div className={`option active`} onClick={() => navigate("/login")}>
+          <div
+            className={`option option-active`}
+            onClick={() => navigate("/login")}
+          >
             Đăng nhập
           </div>
           <div className={`option`} onClick={() => navigate("/signup")}>

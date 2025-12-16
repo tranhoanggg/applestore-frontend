@@ -113,7 +113,10 @@ export default function PasswordReset() {
       <div className="password-reset-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">
-          <div className="option active" onClick={() => navigate("/login")}>
+          <div
+            className="option option-active"
+            onClick={() => navigate("/login")}
+          >
             Đổi mật khẩu
           </div>
           <div className="option" onClick={() => navigate("/account")}>
@@ -178,7 +181,7 @@ export default function PasswordReset() {
             />
 
             {errors.newPasswordEmpty && (
-              <div className="input-warning password">
+              <div className=" password-reset input-warning password">
                 <img src={require("../../assets/images/warning.png")} alt="" />
                 Nhập mật khẩu mới của bạn.
               </div>
@@ -201,14 +204,14 @@ export default function PasswordReset() {
             />
 
             {errors.confirmEmpty && (
-              <div className="input-warning password-confirm-1">
+              <div className="password-reset input-warning password-confirm-1">
                 <img src={require("../../assets/images/warning.png")} alt="" />
                 Hãy xác nhận mật khẩu mới của bạn.
               </div>
             )}
 
             {errors.confirmMismatch && (
-              <div className="input-warning password-confirm-2">
+              <div className="password-reset input-warning password-confirm-2">
                 <img src={require("../../assets/images/warning.png")} alt="" />
                 Mật khẩu xác nhận chưa khớp.
               </div>
