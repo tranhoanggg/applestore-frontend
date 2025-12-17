@@ -8,6 +8,9 @@ const Bill = () => {
   const [billDetails, setBillDetails] = useState({});
   const [cancelingId, setCancelingId] = useState(null);
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedDate, setSelectedDate] = useState("all");
+
   const loadBills = async () => {
     const res = await fetch(`http://localhost:5000/bill/${client.id}`);
     const data = await res.json();
@@ -19,6 +22,10 @@ const Bill = () => {
 
     loadBills();
   }, [client]);
+
+  const availableDates = Array.from(
+    new Set(bills.map((b) => new Date(b.date).toLocaleDateString("vi-VN")))
+  );
 
   // group bill theo ngày
   const billsByDate = bills.reduce((acc, bill) => {
@@ -55,7 +62,7 @@ const Bill = () => {
       : "Đang chờ thanh toán";
 
   const renderPayment = (method, bank) =>
-    method === "Tiền mặt"
+    method === "Thanh toán tại quầy"
       ? "Thanh toán tại quầy"
       : `Chuyển khoản qua ngân hàng ${bank}`;
 
@@ -92,11 +99,107 @@ const Bill = () => {
     }
   };
 
+  const normalize = (value) => value?.toString().toLowerCase() || "";
+
+  const billMatchSearch = (bill, items, keyword) => {
+    const key = normalize(keyword);
+
+    // === 1. Search ở level bill ===
+    const billFields = [
+      bill.name,
+      bill.payment_method,
+      bill.bank,
+      bill.payment_status,
+    ];
+
+    const matchBillInfo = billFields
+      .filter(Boolean)
+      .some((f) => normalize(f).includes(key));
+
+    if (matchBillInfo) return true;
+
+    // === 2. Search trong sản phẩm (GIỮ LOGIC CŨ) ===
+    return items?.some((item) => {
+      const { product, type } = item;
+      if (!product) return false;
+
+      const searchableFields = [
+        product.name,
+        product.color,
+        product.image,
+        product.price?.toString(),
+      ];
+
+      if (type === "Iphone" || type === "Ipad") {
+        searchableFields.push(product.capacity);
+      }
+
+      if (type === "Mac") {
+        searchableFields.push(product.ram, product.rom);
+      }
+
+      return searchableFields
+        .filter(Boolean)
+        .some((field) => normalize(field).includes(key));
+    });
+  };
+
+  const filteredBillsByDate = Object.entries(billsByDate).reduce(
+    (acc, [date, list]) => {
+      // Filter theo ngày
+      if (selectedDate !== "all" && date !== selectedDate) return acc;
+
+      const filteredList = list.filter((bill) =>
+        billMatchSearch(bill, billDetails[bill.id], searchKeyword)
+      );
+
+      if (filteredList.length) {
+        acc[date] = filteredList;
+      }
+
+      return acc;
+    },
+    {}
+  );
+
   return (
     <section className="bill-container">
       <h1 className="bill-title">Đơn hàng của {client.name}</h1>
 
-      {Object.entries(billsByDate).map(([date, list]) => (
+      {/* ===== SEARCH BAR ===== */}
+      <div className="bill-search-bar">
+        <select
+          className="bill-date-filter"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        >
+          <option value="all">Tất cả các ngày</option>
+          {availableDates.map((date) => (
+            <option key={date} value={date}>
+              {date}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          placeholder="Tìm kiếm sản phẩm trong giỏ hàng..."
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+        />
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+          alt="search"
+          className="bill-search-icon"
+          onClick={() => setSearchKeyword(searchKeyword)}
+        >
+          <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+        </svg>
+      </div>
+
+      {Object.entries(filteredBillsByDate).map(([date, list]) => (
         <div key={date} className="bill-day">
           <h2 className="bill-date">{date}</h2>
 
@@ -184,7 +287,9 @@ const Bill = () => {
                         </div>
 
                         <div className="bill-quantity">
-                          <span>{quantity}</span>
+                          <span style={{ width: "120px" }}>
+                            Số lượng: {quantity}
+                          </span>
                         </div>
 
                         <div className="bill-price">

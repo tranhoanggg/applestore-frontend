@@ -139,7 +139,7 @@ const BuyMac = () => {
 
       try {
         await createBill({
-          payment_method: "Tiền mặt",
+          payment_method: "Thanh toán tại quầy",
           bank: "",
           payment_status: "Đang chờ thanh toán",
         });
@@ -167,7 +167,7 @@ const BuyMac = () => {
   };
 
   const createBill = async ({ payment_method, bank, payment_status }) => {
-    const isCash = payment_method === "Tiền mặt";
+    const isCash = payment_method === "Thanh toán tại quầy";
 
     const payload = {
       user_id: client?.id || null,

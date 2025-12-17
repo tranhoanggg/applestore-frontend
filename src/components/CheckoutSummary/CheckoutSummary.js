@@ -18,6 +18,10 @@ export default function CheckoutSummary() {
   const [isTopPayVisible, setIsTopPayVisible] = useState(true);
   const [isFinalPayVisible, setIsFinalPayVisible] = useState(false);
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [filteredItems, setFilteredItems] = useState([]);
+  const searchTimeoutRef = useRef(null);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -91,6 +95,7 @@ export default function CheckoutSummary() {
       );
 
       setCartItems(items);
+      setFilteredItems(items);
     } catch (err) {
       console.error("Lỗi load cart", err);
     }
@@ -238,7 +243,7 @@ export default function CheckoutSummary() {
   }, [receiver, payMethod]);
 
   const checkoutCart = async ({ payment_method, bank, payment_status }) => {
-    const isCash = payment_method === "Tiền mặt";
+    const isCash = payment_method === "Thanh toán tại quầy";
 
     const payload = {
       user_id: client.id,
@@ -285,7 +290,7 @@ export default function CheckoutSummary() {
 
       try {
         await checkoutCart({
-          payment_method: "Tiền mặt",
+          payment_method: "Thanh toán tại quầy",
           bank: "",
           payment_status: "Đang chờ thanh toán",
         });
@@ -310,6 +315,76 @@ export default function CheckoutSummary() {
     setShowQR(false);
     setExpired(false);
     setSecondsLeft(600);
+  };
+
+  const filterCartItems = (keyword) => {
+    if (!cartItems.length) return;
+
+    const key = keyword.trim().toLowerCase();
+
+    // Nếu search rỗng → trả lại toàn bộ giỏ
+    if (!key) {
+      setFilteredItems(cartItems);
+      return;
+    }
+
+    const result = cartItems.filter((item) => {
+      const { product, type } = item;
+
+      const searchableFields = [
+        product.name,
+        product.color,
+        product.image,
+        product.price?.toString(),
+      ];
+
+      // Iphone / Ipad → capacity
+      if (type === "Iphone" || type === "Ipad") {
+        searchableFields.push(product.capacity);
+      }
+
+      // Mac → ram, rom
+      if (type === "Mac") {
+        searchableFields.push(product.ram, product.rom);
+      }
+
+      return searchableFields
+        .filter(Boolean)
+        .some(
+          (field) =>
+            field.toString().toLowerCase().includes(key) ||
+            field.toString().toLowerCase().includes(key.toLocaleString("vi-VN"))
+        );
+    });
+
+    setFilteredItems(result);
+  };
+
+  useEffect(() => {
+    if (!searchKeyword.trim()) {
+      setFilteredItems(cartItems);
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      filterCartItems(searchKeyword);
+    }, 1000);
+
+    return () => clearTimeout(searchTimeoutRef.current);
+  }, [searchKeyword, cartItems]);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      filterCartItems(searchKeyword);
+    }
+  };
+
+  const handleSearchClick = () => {
+    filterCartItems(searchKeyword);
   };
 
   return (
@@ -358,8 +433,29 @@ export default function CheckoutSummary() {
           </button>
         </div>
 
+        {/* ===== SEARCH BAR ===== */}
+        <div className="checkout-search-bar">
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm trong giỏ hàng..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+          />
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            alt="search"
+            className="checkout-search-icon "
+            onClick={handleSearchClick}
+          >
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+          </svg>
+        </div>
+
         <div className="checkout-items-container">
-          {cartItems.map((item, index) => {
+          {filteredItems.map((item) => {
             const { product, quantity, type } = item;
 
             return (

@@ -12,7 +12,7 @@
 .bill-date {
   font-size: 20px;
   font-weight: 600;
-  margin: 32px 0 16px;
+  margin: 12px 0 16px;
 }
 
 .bill-card {
@@ -75,7 +75,7 @@
 
 .tooltip {
   position: absolute;
-  bottom: 110%;
+  top: 52px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.85);
@@ -142,9 +142,6 @@
 .bill-quantity {
   display: flex;
   align-items: center;
-  border: 1px solid #d2d2d7;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 /* ===== PRICE ===== */
@@ -156,4 +153,41 @@
   white-space: nowrap;
   position: relative;
   width: 120px;
+}
+
+.bill-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 1100px;
+  margin: 32px auto 0;
+  position: relative;
+}
+
+.bill-search-bar input {
+  width: 360px;
+  padding: 10px 42px 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.bill-search-icon {
+  position: absolute;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.bill-search-icon:hover {
+  opacity: 1;
+}
+
+.bill-date-filter {
+  width: 156px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  margin-right: 12px;
 }
