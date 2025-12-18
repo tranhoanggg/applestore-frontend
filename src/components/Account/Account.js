@@ -7,6 +7,13 @@ export default function Account() {
   const client = JSON.parse(localStorage.getItem("client") || "{}");
 
   const [originalUser, setOriginalUser] = useState(null);
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setPageVisible(true);
+    });
+  }, []);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -188,7 +195,11 @@ export default function Account() {
   );
 
   return (
-    <div className="account-page">
+    <div
+      className={`account-page ${
+        pageVisible ? "page-enter-active" : "page-enter"
+      }`}
+    >
       <div className="account-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">

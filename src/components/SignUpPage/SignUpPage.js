@@ -4,6 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setPageVisible(true);
+    });
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -175,7 +182,11 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="signup-page">
+    <div
+      className={`signup-page-container ${
+        pageVisible ? "page-enter-active" : "page-enter"
+      }`}
+    >
       <div className="signup-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">

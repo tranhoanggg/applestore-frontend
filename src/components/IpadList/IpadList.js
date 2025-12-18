@@ -281,7 +281,15 @@ function IpadList() {
                   {/* Button buy */}
                   <div className="ipadlist-btn-container">
                     <button className="ipadlist btn information">
-                      <span className="more-text">THÔNG TIN SẢN PHẨM</span>
+                      <span
+                        className="more-text"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/ipad/${ipad.name}`);
+                        }}
+                      >
+                        THÔNG TIN SẢN PHẨM
+                      </span>
                     </button>
 
                     <button className="ipadlist btn buy">

@@ -10,6 +10,13 @@ const Bill = () => {
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedDate, setSelectedDate] = useState("all");
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setPageVisible(true);
+    });
+  }, []);
 
   const loadBills = async () => {
     const res = await fetch(`http://localhost:5000/bill/${client.id}`);
@@ -163,7 +170,11 @@ const Bill = () => {
   );
 
   return (
-    <section className="bill-container">
+    <section
+      className={`bill-container ${
+        pageVisible ? "page-enter-active" : "page-enter"
+      }`}
+    >
       <h1 className="bill-title">Đơn hàng của {client.name}</h1>
 
       {/* ===== SEARCH BAR ===== */}

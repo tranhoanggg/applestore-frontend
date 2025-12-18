@@ -25,7 +25,7 @@ const ModelSlider3D = () => {
       name: "Orange",
       path: "/assets/models/Iphone17PromaxOrange/source/Phone.glb",
       color: "#ff6a00",
-      display: "iPhone 17 Pro Max in Oảnge",
+      display: "iPhone 17 Pro Max in Orange",
     },
     {
       name: "Silver",

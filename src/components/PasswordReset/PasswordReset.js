@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PasswordReset.css";
 
 export default function PasswordReset() {
   const navigate = useNavigate();
   const client = JSON.parse(localStorage.getItem("client") || "{}");
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setPageVisible(true);
+    });
+  }, []);
 
   const [form, setForm] = useState({
     password: "",
@@ -109,7 +116,11 @@ export default function PasswordReset() {
   };
 
   return (
-    <div className="password-reset-page">
+    <div
+      className={`password-reset-page ${
+        pageVisible ? "page-enter-active" : "page-enter"
+      }`}
+    >
       <div className="password-reset-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">

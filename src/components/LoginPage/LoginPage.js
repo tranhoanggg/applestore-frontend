@@ -5,6 +5,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setPageVisible(true);
+    });
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -98,7 +105,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
+    <div
+      className={`login-page ${
+        pageVisible ? "page-enter-active" : "page-enter"
+      }`}
+    >
       <div className="login-navbar">
         <div className="heading">Tài khoản Apple</div>
         <div className="option-container">

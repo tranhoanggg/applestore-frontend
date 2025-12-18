@@ -284,7 +284,15 @@ function WatchList() {
                   {/* Button buy */}
                   <div className="watchlist-btn-container">
                     <button className="watchlist btn information">
-                      <span className="more-text">THÔNG TIN SẢN PHẨM</span>
+                      <span
+                        className="more-text"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/watch/${watch.name}`);
+                        }}
+                      >
+                        THÔNG TIN SẢN PHẨM
+                      </span>
                     </button>
 
                     <button className="watchlist btn buy">

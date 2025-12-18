@@ -302,7 +302,15 @@ function IphoneList() {
                   {/* Button buy */}
                   <div className="iphonelist-btn-container">
                     <button className="iphonelist btn information">
-                      <span className="more-text">THÔNG TIN SẢN PHẨM</span>
+                      <span
+                        className="more-text"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/iphone/${iphone.name}`);
+                        }}
+                      >
+                        THÔNG TIN SẢN PHẨM
+                      </span>
                     </button>
 
                     <button

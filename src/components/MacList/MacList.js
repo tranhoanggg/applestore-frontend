@@ -281,7 +281,15 @@ function MacList() {
                   {/* Button buy */}
                   <div className="maclist-btn-container">
                     <button className="maclist btn information">
-                      <span className="more-text">THÔNG TIN SẢN PHẨM</span>
+                      <span
+                        className="more-text"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/mac/${mac.name}`);
+                        }}
+                      >
+                        THÔNG TIN SẢN PHẨM
+                      </span>
                     </button>
 
                     <button className="maclist btn buy">
